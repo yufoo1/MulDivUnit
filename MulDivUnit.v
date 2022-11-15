@@ -164,5 +164,5 @@ module MulDivUnit(
 			.out_res1(div_out_res[1]));
 	 assign in_ready = mul_in_ready & div_in_ready;
 	 assign out_valid = mul_out_valid | div_out_valid;
-	 assign {out_res1, out_res0} = (in_op == 'd2) ? {div_out_res[1], div_out_res[0]} : {mul_out_res[1], mul_out_res[0]};
+	 assign {out_res1, out_res0} = (op == 'd2) ? {div_out_res[1], div_out_res[0]} : {mul_out_res[1], mul_out_res[0]};
 endmodule
