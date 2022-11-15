@@ -95,16 +95,16 @@ class MulDivUnit extends Module {
     io.in.ready := mulUnit.io.in.ready & divUnit.io.in.ready
     io.out.valid := mulUnit.io.out.valid | divUnit.io.out.valid
     io.out.bits := Mux(op === MulDivUnitOp.DIV, divUnit.io.out.bits, mulUnit.io.out.bits)
-    forceName(io.in.ready, "in_ready")
-    forceName(io.in.valid, "in_valid")
-    forceName(io.out.ready, "out_ready")
-    forceName(io.out.valid, "out_valid")
-    forceName(io.in.bits.src(0), "in_src0")
-    forceName(io.in.bits.src(1), "in_src1")
-    forceName(io.in.bits.op, "in_op")
-    forceName(io.in.bits.sign, "in_sign")
-    forceName(io.out.bits.res(0), "out_res0")
-    forceName(io.out.bits.res(1), "out_res1")
+//    forceName(io.in.ready, "in_ready")
+//    forceName(io.in.valid, "in_valid")
+//    forceName(io.out.ready, "out_ready")
+//    forceName(io.out.valid, "out_valid")
+//    forceName(io.in.bits.src(0), "in_src0")
+//    forceName(io.in.bits.src(1), "in_src1")
+//    forceName(io.in.bits.op, "in_op")
+//    forceName(io.in.bits.sign, "in_sign")
+//    forceName(io.out.bits.res(0), "out_res0")
+//    forceName(io.out.bits.res(1), "out_res1")
 }
 
 object Generate_Mdu {
