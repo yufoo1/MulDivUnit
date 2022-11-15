@@ -19,10 +19,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module MulUnit(
-	 input clock,
-	 input reset,
+	input clock,
+	input reset,
     input [31:0] in_src0,
-	 input [31:0] in_src1,
+	input [31:0] in_src1,
     input [1:0] in_op,
     input in_sign,
     output in_ready,
@@ -30,13 +30,13 @@ module MulUnit(
     input out_ready,
     output out_valid,
     output [31:0] out_res0,
-	 output [31:0] out_res1
+	output [31:0] out_res1
     );
-	 reg done;
-	 reg[63:0] tmp;
-	 wire signed[63:0] sr = $signed(in_src0) * $signed(in_src1);
-	 wire[63:0] usr = in_src0 * in_src1;
-	 always@(posedge clock) begin
+	reg done;
+	reg[63:0] tmp;
+	wire signed[63:0] sr = $signed(in_src0) * $signed(in_src1);
+	wire[63:0] usr = in_src0 * in_src1;
+	always@(posedge clock) begin
 		if(reset) begin
 			done <= 'h0;
 			tmp <= 'h0;
@@ -47,16 +47,16 @@ module MulUnit(
 			tmp <= 'h0;
 			done <= 'h0;
 		end
-	 end
-	 assign {out_res1, out_res0, in_ready, out_valid} = {tmp, !done, done};
+	end
+	assign {out_res1, out_res0, in_ready, out_valid} = {tmp, !done, done};
 
 endmodule
 
 module DivUnit(
-	 input clock,
-	 input reset,
+	input clock,
+	input reset,
     input [31:0] in_src0,
-	 input [31:0] in_src1,
+	input [31:0] in_src1,
     input [1:0] in_op,
     input in_sign,
     output in_ready,
@@ -64,25 +64,25 @@ module DivUnit(
     input out_ready,
     output out_valid,
     output [31:0] out_res0,
-	 output [31:0] out_res1
+	output [31:0] out_res1
     );
-	 wire negSrcBits[1:0];
-	 assign {negSrcBits[1], negSrcBits[0]} = {in_src1[31] & in_sign, in_src0[31] & in_sign};
-	 wire[31:0] absSrc[1:0];
-	 assign {absSrc[1], absSrc[0]} = {negSrcBits[1] ? -in_src1 : in_src1, negSrcBits[0] ? -in_src0 : in_src0};
-	 wire[63:0] absSrc64[1:0];
-	 assign {absSrc64[1], absSrc64[0]} = {absSrc[1], 64'h0, absSrc[0]};
-	 reg busy;
-	 reg[31:0] timer;
-	 reg[66:0] tmps[3:0];
-	 reg negResBits[1:0];
-	 wire[66:0] subs[2:0];
-	 assign {subs[2], subs[1], subs[0]} = {(tmps[0] << 2) - tmps[3], (tmps[0] << 2) - tmps[2], (tmps[0] << 2) - tmps[1]};
-	 wire[31:0] tmp[1:0];
-	 assign {tmp[1], tmp[0]} = tmps[0][63:0];
-	 assign {out_res1, out_res0} = {negResBits[1] ? -tmp[1] : tmp[1], negResBits[0] ? -tmp[0] : tmp[0]};
-	 assign {in_ready, out_valid} = {!busy, !timer[1] & busy};
-	 always@(posedge clock) begin
+	wire negSrcBits[1:0];
+	assign {negSrcBits[1], negSrcBits[0]} = {in_src1[31] & in_sign, in_src0[31] & in_sign};
+	wire[31:0] absSrc[1:0];
+	assign {absSrc[1], absSrc[0]} = {negSrcBits[1] ? -in_src1 : in_src1, negSrcBits[0] ? -in_src0 : in_src0};
+	wire[63:0] absSrc64[1:0];
+	assign {absSrc64[1], absSrc64[0]} = {absSrc[1], 64'h0, absSrc[0]};
+	reg busy;
+	reg[31:0] timer;
+	reg[66:0] tmps[3:0];
+	reg negResBits[1:0];
+	wire[66:0] subs[2:0];
+	assign {subs[2], subs[1], subs[0]} = {(tmps[0] << 2) - tmps[3], (tmps[0] << 2) - tmps[2], (tmps[0] << 2) - tmps[1]};
+	wire[31:0] tmp[1:0];
+	assign {tmp[1], tmp[0]} = tmps[0][63:0];
+	assign {out_res1, out_res0} = {negResBits[1] ? -tmp[1] : tmp[1], negResBits[0] ? -tmp[0] : tmp[0]};
+	assign {in_ready, out_valid} = {!busy, !timer[1] & busy};
+	always@(posedge clock) begin
 		if(reset) begin
 			{negResBits[1], negResBits[0], timer, tmps[3], tmps[2], tmps[1], tmps[0], busy} <= 0;
 		end else if(in_valid & in_ready & in_op == 'd2) begin
@@ -112,10 +112,10 @@ module DivUnit(
 endmodule
 
 module MulDivUnit(
-	 input clock,
-	 input reset,
+	input clock,
+	input reset,
     input [31:0] in_src0,
-	 input [31:0] in_src1,
+	input [31:0] in_src1,
     input [1:0] in_op,
     input in_sign,
     output in_ready,
@@ -123,12 +123,12 @@ module MulDivUnit(
     input out_ready,
     output out_valid,
     output [31:0] out_res0,
-	 output [31:0] out_res1
+	output [31:0] out_res1
     );
-	 wire[31:0] mul_out_res[1:0];
-	 wire[31:0] div_out_res[1:0];
-	 reg[1:0] op;
-	 always@(posedge clock) begin
+	wire[31:0] mul_out_res[1:0];
+	wire[31:0] div_out_res[1:0];
+	reg[1:0] op;
+	always@(posedge clock) begin
 		if(reset) begin
 			op  <= 'h0;
 		end else if(in_ready & in_valid) begin
@@ -137,7 +137,7 @@ module MulDivUnit(
 			op <= 'h0;
 		end
 	 end
-	 MulUnit MulUnit(
+	MulUnit MulUnit(
 			.clock(clock), 
 			.reset(reset), 
 			.in_src0(in_src0),
@@ -151,7 +151,7 @@ module MulDivUnit(
 			.out_res0(mul_out_res[0]),
 			.out_res1(mul_out_res[1]));
 			
-	 DivUnit DivUnit(
+	DivUnit DivUnit(
 			.clock(clock), 
 			.reset(reset), 
 			.in_src0(in_src0),
@@ -164,7 +164,7 @@ module MulDivUnit(
 			.out_valid(div_out_valid), 
 			.out_res0(div_out_res[0]),
 			.out_res1(div_out_res[1]));
-	 assign in_ready = mul_in_ready & div_in_ready;
-	 assign out_valid = mul_out_valid | div_out_valid;
-	 assign {out_res1, out_res0} = (op == 'd2) ? {div_out_res[1], div_out_res[0]} : {mul_out_res[1], mul_out_res[0]};
+	assign in_ready = mul_in_ready & div_in_ready;
+	assign out_valid = mul_out_valid | div_out_valid;
+	assign {out_res1, out_res0} = (op == 'd2) ? {div_out_res[1], div_out_res[0]} : {mul_out_res[1], mul_out_res[0]};
 endmodule
