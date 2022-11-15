@@ -18,6 +18,9 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
+`define  IDLE 2'b00
+`define  MUL  2'b01
+`define  DIV  2'b10
 module MulUnit(
 	input clock,
 	input reset,
@@ -40,7 +43,7 @@ module MulUnit(
 		if(reset) begin
 			done <= 'h0;
 			tmp <= 'h0;
-		end else if(in_valid & in_ready & (in_op == 'd1)) begin
+		end else if(in_valid & in_ready & (in_op == `MUL)) begin
 			tmp <= in_sign ? sr : usr;
 			done <= 'h1;
 		end else if(out_valid & out_ready) begin
@@ -85,7 +88,7 @@ module DivUnit(
 	always@(posedge clock) begin
 		if(reset) begin
 			{negResBits[1], negResBits[0], timer, tmps[3], tmps[2], tmps[1], tmps[0], busy} <= 0;
-		end else if(in_valid & in_ready & in_op == 'd2) begin
+		end else if(in_valid & in_ready & in_op == `DIV) begin
 			timer <= 32'hffffffff;
 			{negResBits[1], negResBits[0]} <= {negSrcBits[0], negSrcBits[0] ^ negSrcBits[1]};
 			{tmps[3], tmps[2], tmps[1], tmps[0]} <= {({3'b0, absSrc64[1]} << 1) + {3'b0, absSrc64[1]}, {3'b0, absSrc64[1]} << 1, {3'b0, absSrc64[1]}, {3'b0, absSrc64[0]}};
@@ -166,5 +169,5 @@ module MulDivUnit(
 			.out_res1(div_out_res[1]));
 	assign in_ready = mul_in_ready & div_in_ready;
 	assign out_valid = mul_out_valid | div_out_valid;
-	assign {out_res1, out_res0} = (op == 'd2) ? {div_out_res[1], div_out_res[0]} : {mul_out_res[1], mul_out_res[0]};
+	assign {out_res1, out_res0} = (op == `DIV) ? {div_out_res[1], div_out_res[0]} : {mul_out_res[1], mul_out_res[0]};
 endmodule
