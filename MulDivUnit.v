@@ -34,12 +34,14 @@ module MulUnit(
     );
 	 reg done;
 	 reg[63:0] tmp;
+	 wire signed[63:0] sr = $signed(in_src0) * $signed(in_src1);
+	 wire[63:0] usr = in_src0 * in_src1;
 	 always@(posedge clock) begin
 		if(reset) begin
 			done <= 'h0;
 			tmp <= 'h0;
 		end else if(in_valid & in_ready & (in_op == 'd1)) begin
-			tmp <= in_sign ? $signed(in_src0) * $signed(in_src1) : in_src0 * in_src1;
+			tmp <= in_sign ? sr : usr;
 			done <= 'h1;
 		end else if(out_valid & out_ready) begin
 			tmp <= 'h0;
@@ -82,7 +84,7 @@ module DivUnit(
 	 assign {in_ready, out_valid} = {!busy, !timer[1] & busy};
 	 always@(posedge clock) begin
 		if(reset) begin
-			{negResBits[1], negResBits[0], timer, tmps[3], tmps[2], tmps[1], tmps[0], busy} <= 'b0;
+			{negResBits[1], negResBits[0], timer, tmps[3], tmps[2], tmps[1], tmps[0], busy} <= 0;
 		end else if(in_valid & in_ready & in_op == 'd2) begin
 			timer <= 32'hffffffff;
 			{negResBits[1], negResBits[0]} <= {negSrcBits[0], negSrcBits[0] ^ negSrcBits[1]};
@@ -102,7 +104,7 @@ module DivUnit(
 				timer <= timer >> 4;
 				tmps[0] <= tmps[0] << 4;
 			end else if(timer[0]) begin
-				timer <= timer >> 'd2;
+				timer <= timer >> 2;
 				tmps[0] <= !subs[2][66] ? subs[2] + 'd3 : !subs[1][66] ? subs[1] + 'd2 : !subs[0][66] ? subs[0] + 'd1 : (tmps[0] << 2);
 			end
 		end
